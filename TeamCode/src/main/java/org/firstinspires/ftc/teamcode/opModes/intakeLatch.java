@@ -21,8 +21,6 @@ public class intakeLatch extends LinearOpMode{
             } else if (gamepad1.b) {
                 intakeLatch.setPosition(0.0);
             }
-            telemetry.addData("The latch is at ", intakeLatch.getPosition());
-            telemetry.update();
         }
     }
 }
