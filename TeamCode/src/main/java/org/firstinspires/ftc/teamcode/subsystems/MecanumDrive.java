@@ -39,10 +39,10 @@ public class MecanumDrive {
         HardwareMap hardwareMap = opMode.hardwareMap;
         // Name strings must match up with the config on the Robot Controller
         // app.
-        front_left   = hardwareMap.get(DcMotor.class, "FrontLeft");
-        front_right  = hardwareMap.get(DcMotor.class, "FrontRight");
-        back_left    = hardwareMap.get(DcMotor.class, "BackLeft");
-        back_right   = hardwareMap.get(DcMotor.class, "BackRight");
+        front_left   = hardwareMap.get(DcMotor.class, "front_left");
+        front_right  = hardwareMap.get(DcMotor.class, "front_right");
+        back_left    = hardwareMap.get(DcMotor.class, "back_left");
+        back_right   = hardwareMap.get(DcMotor.class, "back_right");
 
         front_left.setDirection(DcMotor.Direction.REVERSE);
         front_right.setDirection(DcMotor.Direction.FORWARD);

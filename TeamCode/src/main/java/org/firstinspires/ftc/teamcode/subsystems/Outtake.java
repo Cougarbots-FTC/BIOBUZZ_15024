@@ -37,8 +37,8 @@ public class Outtake {
 
         driver2 = opMode.gamepad2;
 
-        outtakeB = hardwareMap.get(DcMotorEx.class, "outtake1");
-        outtakeR = hardwareMap.get(DcMotorEx.class, "outtake2");
+        outtakeB = hardwareMap.get(DcMotorEx.class, "outtakeB");
+        outtakeR = hardwareMap.get(DcMotorEx.class, "outtakeR");
 
         outtakeB.setDirection(DcMotor.Direction.FORWARD);
         outtakeR.setDirection(DcMotor.Direction.FORWARD);

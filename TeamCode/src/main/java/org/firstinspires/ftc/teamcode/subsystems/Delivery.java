@@ -30,7 +30,7 @@ public class Delivery {
         driver2 = opMode.gamepad2;
 
         // Names must match the Robot Configuration
-        deliveryMotor = hardwareMap.get(DcMotor.class, "delivery");
+        deliveryMotor = hardwareMap.get(DcMotor.class, "deliveryMotor");
 
         deliveryMotor.setDirection(DcMotor.Direction.FORWARD);
 

@@ -29,7 +29,7 @@ public class Intake {
         driver2 = opMode.gamepad2;
 
         // Names must match the Robot Configuration
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
