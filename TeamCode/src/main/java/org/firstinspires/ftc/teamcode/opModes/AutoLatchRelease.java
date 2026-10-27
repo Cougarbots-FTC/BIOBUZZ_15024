@@ -1,26 +1,21 @@
 /*/
 Might have to change the latch's name
+After you hit start on the auto thing it releases the latch
+
 /*/
 package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@TeleOp(name="Intake Latch")
-public class intakeLatch extends LinearOpMode{
-
+@Autonomous(name="Auto latch release")
+public class AutoLatchRelease extends LinearOpMode{
     @Override
     public void runOpMode() {
         Servo intakeLatch = hardwareMap.get(Servo.class, "intakeLatch");
 
         waitForStart();
-        while (opModeIsActive()) {
-            if (gamepad1.a) {
-                intakeLatch.setPosition(0.5);
-            } else if (gamepad1.b) {
-                intakeLatch.setPosition(0.0);
-            }
-        }
+        intakeLatch.setPosition(0.5);
     }
 }
