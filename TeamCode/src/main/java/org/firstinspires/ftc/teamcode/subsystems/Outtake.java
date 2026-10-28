@@ -1,53 +1,56 @@
+
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Outtake {
 
     // Motors
-    private DcMotorEx outtakeB; //Used to be "leftShooter"
-    private DcMotorEx outtakeR; //Used to be "rightShooter"
+    private final DcMotorEx outtakeB;
+    private final DcMotorEx outtakeR;
 
-    // OpMode & Gamepads
+    // OpMode and controller
     private final OpMode opMode;
     private final Gamepad driver2;
 
-    // State
+    // Toggle state
     private boolean outtakeOn = false;
-
-    // Button edge tracking
     private boolean prevX = false;
-    private boolean prevRB = false;
-    private boolean prevLB = false;
 
-    // Power control
-    private double outtakePower = -0.8;
-    private static final double POWER_STEP = 0.075;
-    private static final double MAX_POWER = 1.0;
-    private static final double MIN_POWER = -1.0;
+    // Speed control (encoder ticks per second)
+    private int outtakePower = 1500;
 
-    // Constructor
+    private static final int POWER_STEP = 100;
+    private static final int MAX_POWER = 1500;
+    private static final int MIN_POWER = 0;
+
     public Outtake(OpMode opMode) {
         this.opMode = opMode;
-        HardwareMap hardwareMap = opMode.hardwareMap;
+        this.driver2 = opMode.gamepad2;
 
-        driver2 = opMode.gamepad2;
+        outtakeB = opMode.hardwareMap.get(
+                DcMotorEx.class, "outtakeB");
 
-        outtakeB = hardwareMap.get(DcMotorEx.class, "outtakeB");
-        outtakeR = hardwareMap.get(DcMotorEx.class, "outtakeR");
+        outtakeR = opMode.hardwareMap.get(
+                DcMotorEx.class, "outtakeR");
 
-        outtakeB.setDirection(DcMotor.Direction.FORWARD);
-        outtakeR.setDirection(DcMotor.Direction.FORWARD);
+        outtakeB.setDirection(DcMotor.Direction.REVERSE);
+        outtakeR.setDirection(DcMotor.Direction.REVERSE);
 
-        outtakeB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        outtakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        outtakeR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        outtakeB.setZeroPowerBehavior(
+                DcMotor.ZeroPowerBehavior.FLOAT);
+
+        outtakeR.setZeroPowerBehavior(
+                DcMotor.ZeroPowerBehavior.FLOAT);
+
+        stop();
     }
 
     // Call this every loop in TeleOp
@@ -56,7 +59,8 @@ public class Outtake {
         handleSpeedAdjust();
 
         if (outtakeOn) {
-            setPower(outtakePower);
+            outtakeB.setVelocity(outtakePower);
+            outtakeR.setVelocity(outtakePower);
         } else {
             stop();
         }
@@ -64,7 +68,7 @@ public class Outtake {
         sendTelemetry();
     }
 
-    // Toggle outtake ON/OFF with X
+    // Toggle ON/OFF with gamepad 2 X
     private void handleToggle() {
         boolean xPressed = driver2.x;
 
@@ -75,41 +79,56 @@ public class Outtake {
         prevX = xPressed;
     }
 
-    // Adjust speed with bumpers
+    // Adjust speed with gamepad 2 D-pad
     private void handleSpeedAdjust() {
-        boolean rb = driver2.right_bumper;
-        boolean lb = driver2.left_bumper;
-
-        if (rb && !prevRB) {
+        if (driver2.dpadUpWasPressed()) {
             outtakePower += POWER_STEP;
         }
 
-        if (lb && !prevLB) {
+        if (driver2.dpadDownWasPressed()) {
             outtakePower -= POWER_STEP;
         }
 
-        // Clamp power
-        outtakePower = Math.max(MIN_POWER, Math.min(MAX_POWER, outtakePower));
-
-        prevRB = rb;
-        prevLB = lb;
+        // Keep target velocity within safe configured limits
+        outtakePower = Math.max(
+                MIN_POWER,
+                Math.min(MAX_POWER, outtakePower));
     }
 
-    // Motor helpers
-    public void setPower(double power) {
-        outtakeB.setPower(power);
-        outtakeR.setPower(power);
-    }
-
+    // Stop both motors
     private void stop() {
-        outtakeB.setPower(0);
-        outtakeR.setPower(0);
+        outtakeB.setVelocity(0);
+        outtakeR.setVelocity(0);
+    }
+
+    // Optional manual power control
+    public void setPower(double power) {
+        double safePower = Math.max(-1.0, Math.min(1.0, power));
+
+        outtakeB.setPower(safePower);
+        outtakeR.setPower(safePower);
+    }
+
+    // Turn off the outtake
+    public void outtakeOff() {
+        outtakeOn = false;
+        stop();
     }
 
     // Telemetry
     private void sendTelemetry() {
-        opMode.telemetry.addData("Outtake", outtakeOn ? "ON" : "OFF");
-        opMode.telemetry.addData("Outtake Power", "%.2f", outtakePower);
-        opMode.telemetry.update();
+        opMode.telemetry.addData(
+                "Outtake Status", outtakeOn ? "ON" : "OFF");
+
+        opMode.telemetry.addData(
+                "Target Velocity", outtakePower);
+
+        opMode.telemetry.addData(
+                "Outtake B Velocity",
+                "%.0f", outtakeB.getVelocity());
+
+        opMode.telemetry.addData(
+                "Outtake R Velocity",
+                "%.0f", outtakeR.getVelocity());
     }
 }

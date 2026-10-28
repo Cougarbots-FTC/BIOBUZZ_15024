@@ -1,79 +1,61 @@
+
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static java.lang.Thread.sleep;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Disabled
 public class Intake {
 
-    private DcMotor intakeMotor = null;
-    private final OpMode opMode;
-    private final ElapsedTime runtime = new ElapsedTime();
-
-    private double INTAKE_POWER = 1;
+    private final DcMotor intakeMotor1;
+    private final DcMotor intakeMotor2;
     private final Gamepad driver1;
-    private final Gamepad driver2;
+
+    private static final double INTAKE_POWER = 1.0;
+    private static final double REVERSE_POWER = -1.0;
+    private static final double TRIGGER_THRESHOLD = 0.1;
 
     public Intake(OpMode opMode) {
-        this.opMode = opMode;
-
-        HardwareMap hardwareMap = opMode.hardwareMap;
 
         driver1 = opMode.gamepad1;
-        driver2 = opMode.gamepad2;
 
-        // Names must match the Robot Configuration
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        intakeMotor1 = opMode.hardwareMap.get(
+                DcMotor.class, "intakeMotor");
 
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor2 = opMode.hardwareMap.get(
+                DcMotor.class, "deliveryMotor");
 
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor1.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor1.setZeroPowerBehavior(
+                DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    /**  tele-op that just runs the spinner continuously*/
+    public void teleOp() {
 
-    public void teleOp(){
-        double power = 0;
-        if(driver1.left_trigger > 0){
-            power = INTAKE_POWER;
+        boolean rightTrigger =
+                driver1.right_trigger > TRIGGER_THRESHOLD;
+        boolean leftTrigger =
+                driver1.left_trigger > TRIGGER_THRESHOLD;
+
+        if (rightTrigger && !leftTrigger) {
+            // Right trigger: reverse intake
+            intakeMotor1.setPower(REVERSE_POWER);
+        } else if (leftTrigger && !rightTrigger) {
+            // Left trigger: forward intake
+            intakeMotor1.setPower(INTAKE_POWER);
+        } else {
+            // Neither trigger, or both triggers: stop
+            intakeMotor1.setPower(0);
         }
-        else if(driver1.right_trigger > 0){
-
-            power = -INTAKE_POWER;
-        }
-        else{
-            power = 0;
-        }
-
-        intakeMotor.setPower(power);
-
     }
-    public void intakeAuto(int seconds,double power){
-        intakeMotor.setPower(power);
 
-        try {
-            sleep(seconds);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        intakeMotor.setPower(0);
-
+    public void intakeOn(double power) {
+        intakeMotor1.setPower(
+                Math.max(-1.0, Math.min(1.0, power)));
     }
-    public void intakeOn(double power)
-    {
 
-        intakeMotor.setPower(power);
-
-    }
-    public void intakeOff()
-    {
-        intakeMotor.setPower(0);
-
+    public void intakeOff() {
+        intakeMotor1.setPower(0);
     }
 }

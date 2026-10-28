@@ -1,7 +1,7 @@
 /*/
 Might have to change the latch's name
 /*/
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,9 +17,9 @@ public class intakeLatch extends LinearOpMode{
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                intakeLatch.setPosition(0.5);
+                intakeLatch.setPosition(-0.5);
             } else if (gamepad1.b) {
-                intakeLatch.setPosition(0.0);
+                intakeLatch.setPosition(-0.0);
             }
         }
     }
