@@ -16,6 +16,7 @@ public class AutoLatchRelease extends LinearOpMode{
         Servo intakeLatch = hardwareMap.get(Servo.class, "intakeLatch");
 
         waitForStart();
+        telemetry.addData("it works");
         intakeLatch.setPosition(0.5);
     }
 }
