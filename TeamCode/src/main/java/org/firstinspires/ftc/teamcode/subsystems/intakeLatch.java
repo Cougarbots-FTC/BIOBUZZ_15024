@@ -21,7 +21,7 @@ public class AutoLatchRelease extends LinearOpMode {
             }
         }
 
-        telemetry.addData("it works");
+        telemetry.addData("it works","it works");
         telemetry.update();
         
     }
