@@ -10,6 +10,7 @@ public class Intake {
     private final DcMotor intakeMotor1;
     private final DcMotor intakeMotor2;
     private final Gamepad driver1;
+    private final Gamepad driver2;
 
     private static final double INTAKE_POWER = 1.0;
     private static final double REVERSE_POWER = -1.0;
@@ -18,7 +19,7 @@ public class Intake {
     public Intake(OpMode opMode) {
 
         driver1 = opMode.gamepad1;
-
+        driver2 = opMode.gamepad2;
         intakeMotor1 = opMode.hardwareMap.get(
                 DcMotor.class, "intakeMotor");
 
@@ -33,19 +34,27 @@ public class Intake {
 
     public void teleOp() {
 
-        boolean rightTrigger =
-                driver1.right_trigger > TRIGGER_THRESHOLD;
-        boolean leftTrigger =
+        // Driver 1 keeps trigger control
+        boolean g1Forward =
                 driver1.left_trigger > TRIGGER_THRESHOLD;
+        boolean g1Reverse =
+                driver1.right_trigger > TRIGGER_THRESHOLD;
 
-        if (rightTrigger && !leftTrigger) {
-            // Right trigger: reverse intake
+        // Driver 2 uses thumbsticks
+        boolean g2Forward =
+                driver2.right_stick_y < -TRIGGER_THRESHOLD;
+        boolean g2Reverse =
+                driver2.left_stick_y < -TRIGGER_THRESHOLD;
+
+        if (g1Forward || g2Forward) {
+            if (!(g1Reverse || g2Reverse)) {
+                intakeMotor1.setPower(INTAKE_POWER);
+            } else {
+                intakeMotor1.setPower(0);
+            }
+        } else if (g1Reverse || g2Reverse) {
             intakeMotor1.setPower(REVERSE_POWER);
-        } else if (leftTrigger && !rightTrigger) {
-            // Left trigger: forward intake
-            intakeMotor1.setPower(INTAKE_POWER);
         } else {
-            // Neither trigger, or both triggers: stop
             intakeMotor1.setPower(0);
         }
     }

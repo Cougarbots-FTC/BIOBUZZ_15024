@@ -22,10 +22,10 @@ public class Outtake {
     private boolean prevX = false;
 
     // Speed control (encoder ticks per second)
-    private int outtakePower = 1500;
+        private int outtakePower = 1400;
 
-    private static final int POWER_STEP = 100;
-    private static final int MAX_POWER = 1500;
+    private static final int POWER_STEP = 25;
+    private static final int MAX_POWER = 2000   ;
     private static final int MIN_POWER = 0;
 
     public Outtake(OpMode opMode) {
