@@ -1,24 +1,22 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.subsystems.intakeLatch;
 
-@Autonomous(name="Auto Latch Release")
+@Autonomous(name="Auto Latch Release test")
 public class AutoLatchReleaseTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Servo intakeLatch = hardwareMap.get(Servo.class, "intakeLatch");
-
-
+        intakeLatch latch = new intakeLatch(hardwareMap);
 
         waitForStart();
+        latch.releaseLatch();
 
-
-        intakeLatch.setPosition(0.5);
-
-        telemetry.addData("Status", "Latch Released!");
+        telemetry.addData("Status", "works");
         telemetry.update();
+
     }
 }
+
