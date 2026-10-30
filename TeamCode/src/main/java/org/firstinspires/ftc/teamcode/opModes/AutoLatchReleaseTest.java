@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Auto Latch Release")
-public class AutoLatchRelease extends LinearOpMode {
+public class AutoLatchReleaseTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
